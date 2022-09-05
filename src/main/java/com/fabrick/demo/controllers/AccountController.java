@@ -25,9 +25,20 @@ public class AccountController {
 
     @CrossOrigin(origins = "*")
     @RequestMapping(method = RequestMethod.GET, value = "/{accountid}/transactions", produces = "application/json")
-    public List<AccountTransactionDTO> getTransactionList(@PathVariable("accountid") Long accountId, @RequestParam("fromAccountingDate")
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fromAccountingDate, @RequestParam("toAccountingDate")
-                                                          @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate toAccountingDate) {
+    public List<AccountTransactionDTO> getTransactionList(@PathVariable("accountid") Long accountId,
+                                                          @RequestParam("fromAccountingDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fromAccountingDate,
+                                                          @RequestParam("toAccountingDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate toAccountingDate) {
         return accountService.getTransactionList(accountId, fromAccountingDate, toAccountingDate);
+    }
+
+    @CrossOrigin(origins = "*")
+    @RequestMapping(method = RequestMethod.POST, value = "/{accountid}/payments/money-transfers", produces = "application/json")
+    public String moneyTransfers(@PathVariable("accountid") Long accountId,
+                                 @RequestParam("receiverName") String receiverName,
+                                 @RequestParam("description") String description,
+                                 @RequestParam("currency") String currency,
+                                 @RequestParam("amount") String amount,
+                                 @RequestParam("executionDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate executionDate) {
+        return accountService.doMoneyTransfers(accountId, receiverName, description, currency, amount, executionDate);
     }
 }

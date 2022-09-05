@@ -1,7 +1,7 @@
 package com.fabrick.demo.services;
 
 import com.fabrick.demo.dto.AccountTransactionDTO;
-import com.fabrick.demo.dto.FabrickGeneralResponseDTO;
+import com.fabrick.demo.dto.FabrickGeneralDTO;
 import com.fabrick.demo.exceptions.BadRequestException;
 import com.fabrick.demo.exceptions.GenericException;
 import com.fabrick.demo.exceptions.NotFoundException;
@@ -38,9 +38,9 @@ public class AccountService {
 
         final HttpEntity<String> entity = new HttpEntity<String>(headers);
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<FabrickGeneralResponseDTO> response = restTemplate.exchange(
+        ResponseEntity<FabrickGeneralDTO> response = restTemplate.exchange(
                 baseUrl + String.format("/api/gbs/banking/v4.0/accounts/%d/balance", accountId),
-                HttpMethod.GET, entity, FabrickGeneralResponseDTO.class
+                HttpMethod.GET, entity, FabrickGeneralDTO.class
         );
 
         if (response.getBody() == null) throw new NotFoundException("Account not found");
@@ -60,7 +60,7 @@ public class AccountService {
 
         if (accountId == null) throw new BadRequestException("Invalid account ID");
 
-        DateTimeFormatter formatters = DateTimeFormatter.ofPattern("yyyy-MM-d");
+        DateTimeFormatter formatters = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
         String uri = baseUrl + String.format("/api/gbs/banking/v4.0/accounts/%d/transactions?", accountId) +
                 String.format("fromAccountingDate=%s", fromAccountingDate.format(formatters)) +
@@ -72,7 +72,7 @@ public class AccountService {
 
         final HttpEntity<String> entity = new HttpEntity<>(headers);
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<FabrickGeneralResponseDTO> response = restTemplate.exchange(uri, HttpMethod.GET, entity, FabrickGeneralResponseDTO.class);
+        ResponseEntity<FabrickGeneralDTO> response = restTemplate.exchange(uri, HttpMethod.GET, entity, FabrickGeneralDTO.class);
 
         if (response.getBody() == null) throw new NotFoundException("Account not found");
 
@@ -85,5 +85,30 @@ public class AccountService {
         } catch (Exception e) {
             throw new GenericException("Invalid transactions list in the response");
         }
+    }
+
+    public String doMoneyTransfers(Long accountId, String receiverName, String description, String currency, String amount, LocalDate executionDate) {
+        if (accountId == null) throw new BadRequestException("Invalid account ID");
+
+        DateTimeFormatter formatters = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        String uri = baseUrl + String.format("/api/gbs/banking/v4.0/accounts/%s/payments/money-transfers?", accountId) +
+                String.format("receiverName=%s", receiverName) +
+                String.format("&description=%s", description) +
+                String.format("&currency=%s", currency) +
+                String.format("&amount=%s", amount) +
+                String.format("&executionDate=%s", executionDate.format(formatters));
+
+        final HttpHeaders headers = new HttpHeaders();
+        headers.set("Auth-Schema", authSchema);
+        headers.set("Api-Key", apiKey);
+
+        final HttpEntity<String> entity = new HttpEntity<>(headers);
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<Object> response = restTemplate.exchange(uri, HttpMethod.POST, entity, Object.class);
+
+        if (response.getBody() == null) return "";
+
+        return response.getBody().toString();
     }
 }

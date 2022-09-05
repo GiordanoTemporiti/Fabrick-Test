@@ -1,29 +1,51 @@
 package com.fabrick.demo.exceptions;
 
 
+import com.fabrick.demo.dto.FabrickGeneralDTO;
+import com.fabrick.demo.exceptions.response.DefaultErrorResponse;
+import com.fabrick.demo.exceptions.response.FabricErrorResponse;
+import com.fabrick.demo.utilities.Cleaner;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.client.HttpServerErrorException;
 
 @ControllerAdvice
 public class DefaultExceptionHandler {
 
+    @Autowired
+    ObjectMapper mapper;
+
     @ExceptionHandler
-    public ResponseEntity<ErrorResponse> handleException(NotFoundException nfe) {
-        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.NOT_FOUND, nfe.getMessage(), System.currentTimeMillis());
-        return new ResponseEntity<ErrorResponse>(errorResponse, HttpStatus.NOT_FOUND);
+    public ResponseEntity<DefaultErrorResponse> handleException(NotFoundException nfe) {
+        DefaultErrorResponse errorResponse = new DefaultErrorResponse(HttpStatus.NOT_FOUND, nfe.getMessage(), System.currentTimeMillis());
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler
-    public ResponseEntity<ErrorResponse> handleException(BadRequestException bre) {
-        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST, bre.getMessage(), System.currentTimeMillis());
-        return new ResponseEntity<ErrorResponse>(errorResponse, HttpStatus.BAD_REQUEST);
+    public ResponseEntity<DefaultErrorResponse> handleException(BadRequestException bre) {
+        DefaultErrorResponse errorResponse = new DefaultErrorResponse(HttpStatus.BAD_REQUEST, bre.getMessage(), System.currentTimeMillis());
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler
-    public ResponseEntity<ErrorResponse> handleException(GenericException ge) {
-        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, ge.getMessage(), System.currentTimeMillis());
-        return new ResponseEntity<ErrorResponse>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+    public ResponseEntity<DefaultErrorResponse> handleException(GenericException ge) {
+        DefaultErrorResponse errorResponse = new DefaultErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, ge.getMessage(), System.currentTimeMillis());
+        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    @ExceptionHandler
+    public ResponseEntity<FabricErrorResponse> handleException(HttpServerErrorException hsee) {
+        try {
+            String message = Cleaner.cleanFabrickError(hsee);
+            FabrickGeneralDTO fabrickGeneralDTO = mapper.readValue(message, FabrickGeneralDTO.class);
+            return new ResponseEntity<>(fabrickGeneralDTO.getErrors().get(0), HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            throw new GenericException(e);
+        }
+    }
+
 }

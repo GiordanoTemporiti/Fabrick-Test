@@ -1,15 +1,15 @@
-package com.fabrick.demo.exceptions;
+package com.fabrick.demo.exceptions.response;
 
 import lombok.Value;
 import org.springframework.http.HttpStatus;
 
 @Value
-public class ErrorResponse {
+public class DefaultErrorResponse {
     int status;
     String message;
     long timeStamp;
 
-    public ErrorResponse(HttpStatus status, String message, long timeStamp) {
+    public DefaultErrorResponse(HttpStatus status, String message, long timeStamp) {
         this.status = status.value();
         this.message = message;
         this.timeStamp = timeStamp;
