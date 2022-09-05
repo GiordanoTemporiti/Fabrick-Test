@@ -4,7 +4,7 @@ import org.springframework.web.client.HttpServerErrorException;
 
 public class Cleaner {
 
-    public static String cleanFabrickError(HttpServerErrorException error) {
+    public static String cleanRestTemplateError(HttpServerErrorException error) {
         String message = error.getMessage();
         if (error == null || message == null || message.length() == 0) return "";
 

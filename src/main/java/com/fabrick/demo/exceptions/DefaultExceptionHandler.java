@@ -3,7 +3,7 @@ package com.fabrick.demo.exceptions;
 
 import com.fabrick.demo.dto.FabrickGeneralDTO;
 import com.fabrick.demo.exceptions.response.DefaultErrorResponse;
-import com.fabrick.demo.exceptions.response.FabricErrorResponse;
+import com.fabrick.demo.pojo.FabricError;
 import com.fabrick.demo.utilities.Cleaner;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,9 +38,9 @@ public class DefaultExceptionHandler {
     }
 
     @ExceptionHandler
-    public ResponseEntity<FabricErrorResponse> handleException(HttpServerErrorException hsee) {
+    public ResponseEntity<FabricError> handleException(HttpServerErrorException hsee) {
         try {
-            String message = Cleaner.cleanFabrickError(hsee);
+            String message = Cleaner.cleanRestTemplateError(hsee);
             FabrickGeneralDTO fabrickGeneralDTO = mapper.readValue(message, FabrickGeneralDTO.class);
             return new ResponseEntity<>(fabrickGeneralDTO.getErrors().get(0), HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (Exception e) {

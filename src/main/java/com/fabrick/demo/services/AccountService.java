@@ -21,12 +21,15 @@ import java.util.Map;
 
 @Service
 public class AccountService {
-    @Value("${api.fabrick.baseurl}")
-    private String baseUrl;
-    @Value("${api.fabrick.authschema}")
-    public String authSchema;
-    @Value("${api.fabrick.apikey}")
-    public String apiKey;
+    private final String baseUrl;
+    private final String authSchema;
+    private final String apiKey;
+
+    public AccountService(@Value("${api.fabrick.baseurl}") String baseUrl, @Value("${api.fabrick.authschema}") String authSchema, @Value("${api.fabrick.apikey}") String apiKey) {
+        this.baseUrl = baseUrl;
+        this.authSchema = authSchema;
+        this.apiKey = apiKey;
+    }
 
     public BigDecimal getBalance(Long accountId) {
 
