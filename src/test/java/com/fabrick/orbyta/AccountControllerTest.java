@@ -1,6 +1,6 @@
-package com.fabrick.demo;
+package com.fabrick.orbyta;
 
-import com.fabrick.demo.dto.AccountTransactionDTO;
+import com.fabrick.orbyta.dto.AccountTransactionDTO;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Assert;

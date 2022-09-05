@@ -1,4 +1,4 @@
-package com.fabrick.demo.exceptions.response;
+package com.fabrick.orbyta.exceptions.response;
 
 import lombok.Value;
 import org.springframework.http.HttpStatus;

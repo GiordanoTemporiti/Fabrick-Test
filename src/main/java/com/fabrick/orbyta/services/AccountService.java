@@ -1,10 +1,10 @@
-package com.fabrick.demo.services;
+package com.fabrick.orbyta.services;
 
-import com.fabrick.demo.dto.AccountTransactionDTO;
-import com.fabrick.demo.dto.FabrickGeneralDTO;
-import com.fabrick.demo.exceptions.BadRequestException;
-import com.fabrick.demo.exceptions.GenericException;
-import com.fabrick.demo.exceptions.NotFoundException;
+import com.fabrick.orbyta.dto.AccountTransactionDTO;
+import com.fabrick.orbyta.dto.FabrickGeneralDTO;
+import com.fabrick.orbyta.exceptions.BadRequestException;
+import com.fabrick.orbyta.exceptions.GenericException;
+import com.fabrick.orbyta.exceptions.NotFoundException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;

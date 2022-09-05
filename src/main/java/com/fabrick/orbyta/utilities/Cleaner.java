@@ -1,4 +1,4 @@
-package com.fabrick.demo.utilities;
+package com.fabrick.orbyta.utilities;
 
 import org.springframework.web.client.HttpServerErrorException;
 

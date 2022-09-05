@@ -1,4 +1,4 @@
-package com.fabrick.demo.pojo;
+package com.fabrick.orbyta.pojo;
 
 import lombok.Value;
 

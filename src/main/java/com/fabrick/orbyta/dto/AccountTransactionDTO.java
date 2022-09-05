@@ -1,6 +1,6 @@
-package com.fabrick.demo.dto;
+package com.fabrick.orbyta.dto;
 
-import com.fabrick.demo.pojo.TransactionType;
+import com.fabrick.orbyta.pojo.TransactionType;
 import lombok.Data;
 
 import java.math.BigDecimal;

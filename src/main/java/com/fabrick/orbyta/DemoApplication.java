@@ -1,4 +1,4 @@
-package com.fabrick.demo;
+package com.fabrick.orbyta;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

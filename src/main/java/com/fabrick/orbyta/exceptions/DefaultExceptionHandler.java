@@ -1,10 +1,10 @@
-package com.fabrick.demo.exceptions;
+package com.fabrick.orbyta.exceptions;
 
 
-import com.fabrick.demo.dto.FabrickGeneralDTO;
-import com.fabrick.demo.exceptions.response.DefaultErrorResponse;
-import com.fabrick.demo.pojo.FabricError;
-import com.fabrick.demo.utilities.Cleaner;
+import com.fabrick.orbyta.dto.FabrickGeneralDTO;
+import com.fabrick.orbyta.exceptions.response.DefaultErrorResponse;
+import com.fabrick.orbyta.pojo.FabricError;
+import com.fabrick.orbyta.utilities.Cleaner;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

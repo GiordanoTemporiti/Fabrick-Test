@@ -1,6 +1,6 @@
-package com.fabrick.demo.dto;
+package com.fabrick.orbyta.dto;
 
-import com.fabrick.demo.pojo.FabricError;
+import com.fabrick.orbyta.pojo.FabricError;
 import lombok.Data;
 
 import java.util.ArrayList;

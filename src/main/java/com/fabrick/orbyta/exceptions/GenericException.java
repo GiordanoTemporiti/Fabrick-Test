@@ -1,4 +1,4 @@
-package com.fabrick.demo.exceptions;
+package com.fabrick.orbyta.exceptions;
 
 public class GenericException extends RuntimeException {
 
