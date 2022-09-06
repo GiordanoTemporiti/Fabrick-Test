@@ -32,6 +32,7 @@ public class AccountControllerTest extends DemoApplicationTests {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
     }
 
+    // Checks if returned balance is like expected value
     @Test
     public void checkAccountBalanceValue() throws Exception {
         final long accountId = 14537780;
@@ -41,6 +42,7 @@ public class AccountControllerTest extends DemoApplicationTests {
                 .andExpect(content().string(expectedValue));
     }
 
+    // Checks if each transaction is executed in the specified date range
     @Test
     public void checkTransactionListIsInRange() throws Exception {
         final long accountId = 14537780;
@@ -64,6 +66,7 @@ public class AccountControllerTest extends DemoApplicationTests {
         }
     }
 
+    // Checks if the response API is a bad request
     @Test
     public void checkMoneyTransfersBadRequest() throws Exception {
         final long accountId = 14537780;

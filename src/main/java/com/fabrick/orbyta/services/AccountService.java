@@ -36,6 +36,7 @@ public class AccountService {
         this.entity = new HttpEntity<>(headers);
     }
 
+    // Gets the balance of an bank account
     public BigDecimal getBalance(Long accountId) {
 
         if (accountId == null) throw new BadRequestException("Invalid account ID");
@@ -58,6 +59,7 @@ public class AccountService {
         return new BigDecimal(balanceStr);
     }
 
+    // Gets the transactions list of an bank account in the specified date range
     public List<AccountTransactionDTO> getTransactionList(Long accountId, LocalDate fromAccountingDate, LocalDate toAccountingDate) {
 
         if (accountId == null) throw new BadRequestException("Invalid account ID");
@@ -84,6 +86,7 @@ public class AccountService {
         }
     }
 
+    // Do a money transfer
     public String doMoneyTransfers(Long accountId, String requestBody) {
         if (accountId == null) throw new BadRequestException("Invalid account ID");
 
