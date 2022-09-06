@@ -33,12 +33,7 @@ public class AccountController {
 
     @CrossOrigin(origins = "*")
     @RequestMapping(method = RequestMethod.POST, value = "/{accountid}/payments/money-transfers", produces = "application/json")
-    public String moneyTransfers(@PathVariable("accountid") Long accountId,
-                                 @RequestParam("receiverName") String receiverName,
-                                 @RequestParam("description") String description,
-                                 @RequestParam("currency") String currency,
-                                 @RequestParam("amount") String amount,
-                                 @RequestParam("executionDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate executionDate) {
-        return accountService.doMoneyTransfers(accountId, receiverName, description, currency, amount, executionDate);
+    public String moneyTransfers(@PathVariable("accountid") Long accountId, @RequestBody String requestBody) {
+        return accountService.doMoneyTransfers(accountId, requestBody);
     }
 }

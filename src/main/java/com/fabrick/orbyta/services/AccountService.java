@@ -6,10 +6,7 @@ import com.fabrick.orbyta.exceptions.BadRequestException;
 import com.fabrick.orbyta.exceptions.GenericException;
 import com.fabrick.orbyta.exceptions.NotFoundException;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -21,23 +18,21 @@ import java.util.Map;
 
 @Service
 public class AccountService {
-    private final String baseUrl;
-    private final String authSchema;
-    private final String apiKey;
     private final DateTimeFormatter formatters;
+    private final String baseUrl;
+    private final HttpHeaders headers = new HttpHeaders();
     private final HttpEntity<String> entity;
     private final RestTemplate restTemplate = new RestTemplate();
 
-    public AccountService(@Value("${api.fabrick.baseurl}") String baseUrl, @Value("${api.fabrick.authschema}") String authSchema, @Value("${api.fabrick.apikey}") String apiKey) {
+    public AccountService(@Value("${api.fabrick.baseurl}") String baseUrl, @Value("${api.fabrick.authschema}") String authSchema, @Value("${api.fabrick.apikey}") String apiKey, @Value("${api.fabrick.timezone}") String timezone) {
         this.baseUrl = baseUrl;
-        this.authSchema = authSchema;
-        this.apiKey = apiKey;
-
         this.formatters = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-        HttpHeaders headers = new HttpHeaders();
         headers.set("Auth-Schema", authSchema);
         headers.set("Api-Key", apiKey);
+        headers.set("X-Time-Zone", timezone);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
         this.entity = new HttpEntity<>(headers);
     }
 
@@ -89,20 +84,12 @@ public class AccountService {
         }
     }
 
-    public String doMoneyTransfers(Long accountId, String receiverName, String description, String currency, String amount, LocalDate executionDate) {
+    public String doMoneyTransfers(Long accountId, String requestBody) {
         if (accountId == null) throw new BadRequestException("Invalid account ID");
 
-        final String uri = String.format("%s/api/gbs/banking/v4.0/accounts/%s/payments/money-transfers?", baseUrl, accountId) +
-                String.format("receiverName=%s", receiverName) +
-                String.format("&description=%s", description) +
-                String.format("&currency=%s", currency) +
-                String.format("&amount=%s", amount) +
-                String.format("&executionDate=%s", executionDate.format(formatters));
+        final String uri = String.format("%s/api/gbs/banking/v4.0/accounts/%s/payments/money-transfers", baseUrl, accountId);
+        HttpEntity<String> request = new HttpEntity<>(requestBody, headers);
 
-        ResponseEntity<Object> response = restTemplate.exchange(uri, HttpMethod.POST, entity, Object.class);
-
-        if (response.getBody() == null) return "";
-
-        return response.getBody().toString();
+        return restTemplate.postForObject(uri, request, String.class);
     }
 }
