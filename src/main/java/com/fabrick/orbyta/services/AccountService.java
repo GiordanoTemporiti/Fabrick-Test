@@ -24,25 +24,29 @@ public class AccountService {
     private final String baseUrl;
     private final String authSchema;
     private final String apiKey;
+    private final DateTimeFormatter formatters;
+    private final HttpEntity<String> entity;
+    private final RestTemplate restTemplate = new RestTemplate();
 
     public AccountService(@Value("${api.fabrick.baseurl}") String baseUrl, @Value("${api.fabrick.authschema}") String authSchema, @Value("${api.fabrick.apikey}") String apiKey) {
         this.baseUrl = baseUrl;
         this.authSchema = authSchema;
         this.apiKey = apiKey;
+
+        this.formatters = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Auth-Schema", authSchema);
+        headers.set("Api-Key", apiKey);
+        this.entity = new HttpEntity<>(headers);
     }
 
     public BigDecimal getBalance(Long accountId) {
 
         if (accountId == null) throw new BadRequestException("Invalid account ID");
 
-        final HttpHeaders headers = new HttpHeaders();
-        headers.set("Auth-Schema", authSchema);
-        headers.set("Api-Key", apiKey);
-
-        final HttpEntity<String> entity = new HttpEntity<String>(headers);
-        RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<FabrickGeneralDTO> response = restTemplate.exchange(
-                baseUrl + String.format("/api/gbs/banking/v4.0/accounts/%d/balance", accountId),
+                String.format("%s/api/gbs/banking/v4.0/accounts/%d/balance", baseUrl, accountId),
                 HttpMethod.GET, entity, FabrickGeneralDTO.class
         );
 
@@ -63,18 +67,13 @@ public class AccountService {
 
         if (accountId == null) throw new BadRequestException("Invalid account ID");
 
-        DateTimeFormatter formatters = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        if (toAccountingDate.isBefore(fromAccountingDate) || fromAccountingDate.isAfter(toAccountingDate))
+            throw new BadRequestException("Invalid period");
 
-        String uri = baseUrl + String.format("/api/gbs/banking/v4.0/accounts/%d/transactions?", accountId) +
+        final String uri = String.format("%s/api/gbs/banking/v4.0/accounts/%d/transactions?", baseUrl, accountId) +
                 String.format("fromAccountingDate=%s", fromAccountingDate.format(formatters)) +
                 String.format("&toAccountingDate=%s", toAccountingDate.format(formatters));
 
-        final HttpHeaders headers = new HttpHeaders();
-        headers.set("Auth-Schema", authSchema);
-        headers.set("Api-Key", apiKey);
-
-        final HttpEntity<String> entity = new HttpEntity<>(headers);
-        RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<FabrickGeneralDTO> response = restTemplate.exchange(uri, HttpMethod.GET, entity, FabrickGeneralDTO.class);
 
         if (response.getBody() == null) throw new NotFoundException("Account not found");
@@ -93,21 +92,13 @@ public class AccountService {
     public String doMoneyTransfers(Long accountId, String receiverName, String description, String currency, String amount, LocalDate executionDate) {
         if (accountId == null) throw new BadRequestException("Invalid account ID");
 
-        DateTimeFormatter formatters = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-
-        String uri = baseUrl + String.format("/api/gbs/banking/v4.0/accounts/%s/payments/money-transfers?", accountId) +
+        final String uri = String.format("%s/api/gbs/banking/v4.0/accounts/%s/payments/money-transfers?", baseUrl, accountId) +
                 String.format("receiverName=%s", receiverName) +
                 String.format("&description=%s", description) +
                 String.format("&currency=%s", currency) +
                 String.format("&amount=%s", amount) +
                 String.format("&executionDate=%s", executionDate.format(formatters));
 
-        final HttpHeaders headers = new HttpHeaders();
-        headers.set("Auth-Schema", authSchema);
-        headers.set("Api-Key", apiKey);
-
-        final HttpEntity<String> entity = new HttpEntity<>(headers);
-        RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<Object> response = restTemplate.exchange(uri, HttpMethod.POST, entity, Object.class);
 
         if (response.getBody() == null) return "";

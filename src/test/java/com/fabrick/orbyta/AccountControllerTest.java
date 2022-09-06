@@ -40,7 +40,7 @@ public class AccountControllerTest extends DemoApplicationTests {
                 .andExpect(content().contentType("application/json"))
                 .andExpect(content().string(expectedValue));
     }
-
+    
     @Test
     public void checkTransactionListIsInRange() throws Exception {
         final long accountId = 14537780;
