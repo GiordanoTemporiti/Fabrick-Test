@@ -40,7 +40,7 @@ public class AccountControllerTest extends DemoApplicationTests {
                 .andExpect(content().contentType("application/json"))
                 .andExpect(content().string(expectedValue));
     }
-    
+
     @Test
     public void checkTransactionListIsInRange() throws Exception {
         final long accountId = 14537780;
@@ -64,4 +64,11 @@ public class AccountControllerTest extends DemoApplicationTests {
         }
     }
 
+    @Test
+    public void checkMoneyTransfersBadRequest() throws Exception {
+        final long accountId = 14537780;
+        final String requestBody = "{\"creditor\": {\"name\": \"John Doe\",\"account\": {\"accountCode\": \"IT23A0336844430152923804660\",\"bicCode\": \"SELBIT2BXXX\"},\"address\": {\"address\": null,\"city\": null,\"countryCode\": null}},\"executionDate\": \"2019-04-01\",\"uri\": \"REMITTANCE_INFORMATION\",\"description\": \"Payment invoice 75/2017\",\"amount\": 800,\"currency\": \"EUR\",\"isUrgent\": false,\"isInstant\": false,\"feeType\": \"SHA\",\"feeAccountId\": \"45685475\",\"taxRelief\": {\"taxReliefId\": \"L449\",\"isCondoUpgrade\": false,\"creditorFiscalCode\": \"56258745832\",\"beneficiaryType\": \"NATURAL_PERSON\",\"naturalPersonBeneficiary\": {\"fiscalCode1\": \"MRLFNC81L04A859L\",\"fiscalCode2\": null,\"fiscalCode3\": null,\"fiscalCode4\": null,\"fiscalCode5\": null},\"legalPersonBeneficiary\": {\"fiscalCode\": null,\"legalRepresentativeFiscalCode\": null}}}";
+        mockMvc.perform(get(String.format("/api/gbs/banking/v4.0/accounts/%s/payments/money-transfers", accountId)).content(requestBody).contentType("application/json"))
+                .andExpect(status().is4xxClientError());
+    }
 }
