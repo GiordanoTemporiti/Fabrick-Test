@@ -19,7 +19,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class AccountControllerTest extends DemoApplicationTests {
+public class AccountControllerTest extends FabrickApplicationTests {
 
     @Autowired
     private WebApplicationContext webApplicationContext;
